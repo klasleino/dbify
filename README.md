@@ -3,14 +3,7 @@ Decorate functions to write their outputs and given parameters to a MySQL databa
 
 ## Installation / Set-up
 
-First, navigate to the root folder of this repo, and activate the virtual environment you would like to install in.
-
-Install the dependencies:
-```
-pip install -r requirements.txt
-```
-
-Install dbify:
+First, navigate to the root folder of this repo, and activate the virtual environment you would like to install in. Then install dbify:
 ```
 pip install -e .
 ```
@@ -106,4 +99,11 @@ db_user = root
 db_password = password
 db_host = 127.0.0.1
 db_port = 3306
+```
+
+### Tip on viewing your databases
+
+To view your databases on Mac OS, you can use sequel pro. If using a modern version of MySQL, you may need the nightly version.
+```
+brew cask install homebrew/cask-versions/sequel-pro-nightly
 ```
