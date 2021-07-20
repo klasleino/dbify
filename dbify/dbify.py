@@ -7,8 +7,11 @@ from dbify.connections import DbServer
 
 def dbify(db_name, table, db_server=None, skip_duplicates=False):
 
-    db_server = (
-        DbServer.from_config(db_name) if db_server is None else db_server)
+    if db_server is None:
+        db_server = DbServer.from_config(db_name)
+
+    elif isinstance(db_server, str):
+        db_server = DbServer.from_config(db_name, db_server)
 
     def insert(db_cursor, column_names, values):
         query = [f'INSERT INTO {table} (']

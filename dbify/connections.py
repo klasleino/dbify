@@ -1,6 +1,10 @@
+import os
+
 from mysql.connector import connect
 from pathlib import Path
 from sshtunnel import SSHTunnelForwarder
+
+from dbify.config_file import ConfigFile
 
 
 class DbServer(object):
@@ -68,31 +72,19 @@ class DbServer(object):
             return False
 
     @staticmethod
-    def from_config(db_name, config_file=None):
-        settings = {}
-        config_file_path = Path.home() / '.dbify_config'
-        try:
-            with open(config_file_path, 'r') as f:
-                for line in f:
-                    setting = line.split('=')
+    def from_config(db_name, config_name=None):
 
-                    if len(setting) != 2:
-                        raise ValueError(
-                            f'Invalid syntax in the following line of the '
-                            f'config file:\n\n'
-                            f'{line}')
+        if 'DBIFY_CONFIG' not in os.environ:
+            config_file_path = Path.home() / '.dbify_config'
+        else:
+            config_file_path = os.environ['DBIFY_CONFIG']
 
-                    try:
-                        settings[setting[0].strip()] = int(setting[1].strip())
-                    except:
-                        settings[setting[0].strip()] = setting[1].strip()
+        config = ConfigFile(config_file_path)
 
-        except:
-            raise Exception(
-                f'There was a problem getting the config file '
-                f'{str(config_file_path)}')
-
-        # TODO: allow use of environment variables to override config file.
+        if config_name in config:
+            settings = config[config_name]
+        else:
+            raise ValueError(f'unknown config name: {config_name}')
 
         if 'db_user' not in settings:
             raise ValueError('"db_user" must be set in config')
