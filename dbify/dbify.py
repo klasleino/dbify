@@ -1,10 +1,11 @@
 from decorator import decorator
 from inspect import getfullargspec as getargspec
+from mysql.connector.errors import ProgrammingError
 
 from dbify.connections import DbServer
 
 
-def dbify(db_name, table, db_server=None):
+def dbify(db_name, table, db_server=None, skip_duplicates=False):
 
     db_server = (
         DbServer.from_config(db_name) if db_server is None else db_server)
@@ -23,6 +24,28 @@ def dbify(db_name, table, db_server=None):
         string_values = tuple([val for val in values if isinstance(val, str)])
 
         db_cursor.execute(' '.join(query), string_values)
+
+    def args_in_table(db_cursor, arg_columns, arg_values):
+        query = [f'SELECT * FROM {table} WHERE']
+        query.append(' AND '.join([
+            f'{arg} = {"%s" if isinstance(val, str) else val}'
+            for arg, val in zip(arg_columns, arg_values)
+        ]))
+
+        string_values = tuple([
+            val for val in arg_values if isinstance(val, str)
+        ])
+
+        try:
+            db_cursor.execute(' '.join(query), string_values)
+
+            return len(db_cursor.fetchall()) > 0
+
+        except ProgrammingError:
+            # We get this error if we're looking for a column that doesn't exist
+            # in this table. In that case, we have not run this function with
+            # these args before.
+            return False
 
     def create_table(db_cursor):
         db_cursor.execute(
@@ -123,6 +146,11 @@ def dbify(db_name, table, db_server=None):
 
         # Run the function.
         result = fn(*args, **kwargs)
+
+        if skip_duplicates:
+            with db_server as db:
+                if args_in_table(db.cursor(), column_names, values):
+                    return result
 
         # If result is a dictionary, we assume it maps columns in the DB to
         # values.
