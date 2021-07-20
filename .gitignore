@@ -25,3 +25,6 @@ MANIFEST
 
 # Mac OS.
 *.DS_Store
+
+# Sublime.
+sftp-config.json
