@@ -3,7 +3,16 @@ Decorate functions to write their outputs and given parameters to a MySQL databa
 
 ## Installation / Set-up
 
-First, navigate to the root folder of this repo, and activate the virtual environment you would like to install in. Then install dbify:
+Simply install via pip:
+```
+pip install dbify
+```
+
+Alternatively, you can install from the source repository:
+
+1. Clone the [repository](https://github.com/klasleino/dbify) and change into its root directory.
+
+2. Install from source via
 ```
 pip install -e .
 ```
