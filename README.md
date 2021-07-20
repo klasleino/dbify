@@ -35,8 +35,8 @@ In this example we assume that there is a database named `'test_database'`. With
 
 ```
 id           | modified        | a | b | c | x | y  | z
--------------+-----------------+---+---+---+---+----+------
-<unique id>  | <date/time run> | 2 | 3 | 1 | 7 | 12 | False
+-------------+-----------------+---+---+---+---+----+----------
+<unique id>  | <date/time run> | 2 | 3 | 1 | 7 | 12 | 0 (False)
 ```
 
 ### Connecting to a MySQL server
